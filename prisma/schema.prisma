@@ -1,0 +1,88 @@
+// schema.prisma
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider  = "postgresql"
+  url       = env("POSTGRES_PRISMA_URL") // uses connection pooling
+  directUrl = env("POSTGRES_URL_NON_POOLING") // uses a direct connection
+}
+
+enum EquipmentSlot {
+  HEADGEARTOP
+  HEADGEARMID
+  HEADGEARLOW
+  ARMOR
+  GARMENT
+  SHOES
+  RIGHTHAND
+  LEFTHAND
+  LEFTACCESSORY
+  RIGHTACCESSORY
+}
+
+enum WeaponRange {
+  MELEE
+  RANGED
+}
+
+enum WeaponHand {
+  ONEHANDED
+  TWOHANDED
+}
+
+model User {
+  id         Int         @id @default(autoincrement())
+  email      String      @unique
+  name       String?
+  password   String
+  characters Character[]
+  createdAt  DateTime    @default(now())
+  updatedAt  DateTime    @updatedAt
+}
+
+model Character {
+  id        Int      @id @default(autoincrement())
+  userId    Int
+  weaponId  Int?
+  name      String
+  baseLevel Int
+  jobLevel  Int
+  str       Int
+  agi       Int
+  vit       Int
+  int       Int
+  dex       Int
+  luk       Int
+  User      User?    @relation(fields: [userId], references: [id])
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Equipment {
+  id           Int           @id @default(autoincrement())
+  name         String
+  slot         EquipmentSlot
+  atk          Int
+  mAtk         Int
+  def          Int
+  mDef         Int
+  bonusAtk     Int
+  bonusMAtk    Int
+  weaponType   WeaponType?   @relation(fields: [weaponTypeId], references: [id])
+  createdAt    DateTime      @default(now())
+  updatedAt    DateTime      @updatedAt
+  weaponTypeId Int?
+}
+
+model WeaponType {
+  id        Int         @id @default(autoincrement())
+  name      String
+  range     WeaponRange
+  hand      WeaponHand
+  createdAt DateTime    @default(now())
+  updatedAt DateTime    @updatedAt
+  Equipment Equipment[]
+}

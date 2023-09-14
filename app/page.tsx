@@ -1,19 +1,32 @@
-import Link from "next/link";
+'use client'
+import { useState } from "react";
 
 export default function Page() {
+
+  const [email, setEmail] = useState('')
+  const [password, setPassword] = useState('')
+
+
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+
+    e.preventDefault()
+
+    const res = await fetch('/api/register', {
+      method: 'POST',
+      body: JSON.stringify({email, password})
+    })
+
+    console.log(res)
+
+  }
+
   return (
-    <body>
-      <h1>Hello, Next.js!</h1>
-      <h2>Goodbye, Next.js!</h2>
-      <Link href="/teste">teste</Link>
-      <br/>
-      <Link href="/teste#idteste">scrollteste</Link>
-      <br/>
-      <Link href="/string/teste">scrollteste</Link>
-      <br/>
-      <Link href="/#idteste">scrollteste</Link>
-      <div style={{paddingTop: '2000px'}}></div>
-      <h2 id="idteste">Goodbye, Next.js!</h2>
-    </body>
+    <>
+      <form className="flex flex-col gap-4 justify-center w-1/4 m-4 p-2" onSubmit={handleSubmit}>
+        <input type="email" className="text-black " name="email" onChange={e=>setEmail(e.target.value)} />
+        <input type="password" className="text-black " name="password" onChange={e=>setPassword(e.target.value)} />
+        <button type="submit">Submit</button>
+      </form>
+    </>
   )
 }
